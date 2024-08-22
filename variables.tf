@@ -22,7 +22,7 @@ variable "network_id" {
 variable "description" {
   description = "MongoDB cluster description"
   type        = string
-  default     = "Managed MongoDB cluster"
+  default     = "Managed MongoDB cluster created by terraform module"
 }
 
 variable "folder_id" {
@@ -160,7 +160,7 @@ variable "hosts_definition" {
 variable "resources_mongod" {
   description = "Resources allocated to mongod hosts of the MongoDB cluster"
   type = object({
-    resource_preset_id = optional(string, "s3-c2-m8")
+    resource_preset_id = optional(string, "s2.micro")
     disk_size          = optional(number, 40)
     disk_type_id       = optional(string, "network-ssd")
   })
@@ -170,7 +170,7 @@ variable "resources_mongod" {
 variable "resources_mongos" {
   description = "Resources allocated to mongos hosts of the MongoDB cluster"
   type = object({
-    resource_preset_id = optional(string, "s3-c2-m8")
+    resource_preset_id = optional(string, "s2.micro")
     disk_size          = optional(number, 40)
     disk_type_id       = optional(string, "network-ssd")
   })
@@ -180,7 +180,7 @@ variable "resources_mongos" {
 variable "resources_mongocfg" {
   description = "Resources allocated to mongocfg hosts of the MongoDB cluster"
   type = object({
-    resource_preset_id = optional(string, "s3-c2-m8")
+    resource_preset_id = optional(string, "s2.micro")
     disk_size          = optional(number, 40)
     disk_type_id       = optional(string, "network-ssd")
   })
@@ -189,7 +189,7 @@ variable "resources_mongocfg" {
 variable "resources_mongoinfra" {
   description = "Resources allocated to mongoinfra hosts of the MongoDB cluster"
   type = object({
-    resource_preset_id = optional(string, "s3-c2-m8")
+    resource_preset_id = optional(string, "s2.micro")
     disk_size          = optional(number, 40)
     disk_type_id       = optional(string, "network-ssd")
   })
