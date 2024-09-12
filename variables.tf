@@ -150,11 +150,10 @@ variable "hosts_definition" {
       tags                 = optional(any, null)
     })), [])
   }))
-  #! не работает
-  # validation {
-  #   condition     = contains(["PRIMARY", "SECONDARY", null], var.hosts_definition[*].role)
-  #   error_message = "Allowed MongoDB roles for host 'PRIMARY', 'SECONDARY'."
-  # }
+  validation {
+    condition     = alltrue([for host in var.hosts_definition : host.role == null || host.role == "PRIMARY" || host.role == "SECONDARY"])
+    error_message = "Allowed MongoDB roles for host are 'PRIMARY' or 'SECONDARY'."
+  }
 }
 
 variable "resources_mongod" {

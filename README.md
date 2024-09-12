@@ -42,14 +42,14 @@ export TF_VAR_network_id=_vpc id here_
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
-| <a name="requirement_yandex"></a> [yandex](#requirement\_yandex) | = 0.126.0 |
+| <a name="requirement_yandex"></a> [yandex](#requirement\_yandex) | >= 0.126.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_random"></a> [random](#provider\_random) | 3.6.2 |
-| <a name="provider_yandex"></a> [yandex](#provider\_yandex) | 0.126.0 |
+| <a name="provider_yandex"></a> [yandex](#provider\_yandex) | 0.129.0 |
 
 ## Modules
 
@@ -60,10 +60,10 @@ No modules.
 | Name | Type |
 |------|------|
 | [random_password.password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
-| [yandex_mdb_mongodb_cluster.this](https://registry.terraform.io/providers/yandex-cloud/yandex/0.126.0/docs/resources/mdb_mongodb_cluster) | resource |
-| [yandex_mdb_mongodb_database.this](https://registry.terraform.io/providers/yandex-cloud/yandex/0.126.0/docs/resources/mdb_mongodb_database) | resource |
-| [yandex_mdb_mongodb_user.user](https://registry.terraform.io/providers/yandex-cloud/yandex/0.126.0/docs/resources/mdb_mongodb_user) | resource |
-| [yandex_client_config.client](https://registry.terraform.io/providers/yandex-cloud/yandex/0.126.0/docs/data-sources/client_config) | data source |
+| [yandex_mdb_mongodb_cluster.this](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/mdb_mongodb_cluster) | resource |
+| [yandex_mdb_mongodb_database.this](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/mdb_mongodb_database) | resource |
+| [yandex_mdb_mongodb_user.user](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/mdb_mongodb_user) | resource |
+| [yandex_client_config.client](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/data-sources/client_config) | data source |
 
 ## Inputs
 
@@ -74,7 +74,7 @@ No modules.
 | <a name="input_backup_window_start"></a> [backup\_window\_start](#input\_backup\_window\_start) | (Optional) Time to start the daily backup, in the UTC timezone. | <pre>object({<br>    hours   = string<br>    minutes = optional(string, "00")<br>  })</pre> | `null` | no |
 | <a name="input_databases"></a> [databases](#input\_databases) | A list of MongoDB databases.<br><br>    Required values:<br>      - name        - The name of the database. | <pre>list(object({<br>    name = string<br>  }))</pre> | `[]` | no |
 | <a name="input_deletion_protection"></a> [deletion\_protection](#input\_deletion\_protection) | Inhibits deletion of the cluster. | `bool` | `false` | no |
-| <a name="input_description"></a> [description](#input\_description) | MongoDB cluster description | `string` | `"Managed MongoDB cluster"` | no |
+| <a name="input_description"></a> [description](#input\_description) | MongoDB cluster description | `string` | `"Managed MongoDB cluster created by terraform module"` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment type: PRODUCTION or PRESTABLE | `string` | `"PRODUCTION"` | no |
 | <a name="input_feature_compatibility_version"></a> [feature\_compatibility\_version](#input\_feature\_compatibility\_version) | MongoDB feature compatibility version | `string` | `""` | no |
 | <a name="input_folder_id"></a> [folder\_id](#input\_folder\_id) | Folder id that contains the MongoDB cluster | `string` | `null` | no |
@@ -88,10 +88,10 @@ No modules.
 | <a name="input_name"></a> [name](#input\_name) | Name of MongoDB cluster | `string` | `"mongodb-cluster"` | no |
 | <a name="input_network_id"></a> [network\_id](#input\_network\_id) | MongoDB cluster network id | `string` | n/a | yes |
 | <a name="input_performance_diagnostics"></a> [performance\_diagnostics](#input\_performance\_diagnostics) | (Optional) MongoDB cluster performance diagnostics settings. | <pre>object({<br>    enabled = optional(bool, true)<br>  })</pre> | `{}` | no |
-| <a name="input_resources_mongocfg"></a> [resources\_mongocfg](#input\_resources\_mongocfg) | Resources allocated to mongocfg hosts of the MongoDB cluster | <pre>object({<br>    resource_preset_id = optional(string, "s3-c2-m8")<br>    disk_size          = optional(number, 40)<br>    disk_type_id       = optional(string, "network-ssd")<br>  })</pre> | `{}` | no |
-| <a name="input_resources_mongod"></a> [resources\_mongod](#input\_resources\_mongod) | Resources allocated to mongod hosts of the MongoDB cluster | <pre>object({<br>    resource_preset_id = optional(string, "s3-c2-m8")<br>    disk_size          = optional(number, 40)<br>    disk_type_id       = optional(string, "network-ssd")<br>  })</pre> | `{}` | no |
-| <a name="input_resources_mongoinfra"></a> [resources\_mongoinfra](#input\_resources\_mongoinfra) | Resources allocated to mongoinfra hosts of the MongoDB cluster | <pre>object({<br>    resource_preset_id = optional(string, "s3-c2-m8")<br>    disk_size          = optional(number, 40)<br>    disk_type_id       = optional(string, "network-ssd")<br>  })</pre> | `{}` | no |
-| <a name="input_resources_mongos"></a> [resources\_mongos](#input\_resources\_mongos) | Resources allocated to mongos hosts of the MongoDB cluster | <pre>object({<br>    resource_preset_id = optional(string, "s3-c2-m8")<br>    disk_size          = optional(number, 40)<br>    disk_type_id       = optional(string, "network-ssd")<br>  })</pre> | `{}` | no |
+| <a name="input_resources_mongocfg"></a> [resources\_mongocfg](#input\_resources\_mongocfg) | Resources allocated to mongocfg hosts of the MongoDB cluster | <pre>object({<br>    resource_preset_id = optional(string, "s2.micro")<br>    disk_size          = optional(number, 40)<br>    disk_type_id       = optional(string, "network-ssd")<br>  })</pre> | `{}` | no |
+| <a name="input_resources_mongod"></a> [resources\_mongod](#input\_resources\_mongod) | Resources allocated to mongod hosts of the MongoDB cluster | <pre>object({<br>    resource_preset_id = optional(string, "s2.micro")<br>    disk_size          = optional(number, 40)<br>    disk_type_id       = optional(string, "network-ssd")<br>  })</pre> | `{}` | no |
+| <a name="input_resources_mongoinfra"></a> [resources\_mongoinfra](#input\_resources\_mongoinfra) | Resources allocated to mongoinfra hosts of the MongoDB cluster | <pre>object({<br>    resource_preset_id = optional(string, "s2.micro")<br>    disk_size          = optional(number, 40)<br>    disk_type_id       = optional(string, "network-ssd")<br>  })</pre> | `{}` | no |
+| <a name="input_resources_mongos"></a> [resources\_mongos](#input\_resources\_mongos) | Resources allocated to mongos hosts of the MongoDB cluster | <pre>object({<br>    resource_preset_id = optional(string, "s2.micro")<br>    disk_size          = optional(number, 40)<br>    disk_type_id       = optional(string, "network-ssd")<br>  })</pre> | `{}` | no |
 | <a name="input_restore_parameters"></a> [restore\_parameters](#input\_restore\_parameters) | The cluster will be created from the specified backup.<br>    NOTES:<br>      - backup\_id must be specified to create a new MongoDB cluster from a backup.<br>      - Time format is 'yyyy-mm-ddThh:mi:ss', where T is a delimeter, e.g. "2022-02-22T11:33:44". | <pre>object({<br>    backup_id = string<br>    time      = optional(string, null)<br>  })</pre> | `null` | no |
 | <a name="input_security_groups_ids_list"></a> [security\_groups\_ids\_list](#input\_security\_groups\_ids\_list) | A list of security group IDs to which the MongoDB cluster belongs | `list(string)` | `[]` | no |
 | <a name="input_users"></a> [users](#input\_users) | This is a list for additional MongoDB users with own permissions. <br><br>    Required values:<br>      - name                  - The name of the user.<br>      - password              - (Optional) The user's password. If it's omitted a random password will be generated<br>      - permissions           - (Optional) A list of objects { databases\_name, grants[] } for an access.<br>                                'roles' is a optional list of permissions, the default values is ["read"] | <pre>list(object({<br>    name     = string<br>    password = optional(string, null)<br>    permissions = optional(list(object({<br>      database_name = string<br>      roles         = optional(list(string), ["read"])<br>    })), [])<br>  }))</pre> | `[]` | no |
