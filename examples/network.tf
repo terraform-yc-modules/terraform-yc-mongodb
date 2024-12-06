@@ -1,6 +1,6 @@
 # VPC and Subnets
 resource "yandex_vpc_network" "vpc" {
-  name = "vpc-mysql-mdb-multi"
+  name = "vpc-mongodb"
 }
 
 resource "yandex_vpc_subnet" "sub_a" {
@@ -17,8 +17,8 @@ resource "yandex_vpc_subnet" "sub_b" {
 
 # Security Group
 resource "yandex_vpc_security_group" "db_sg" {
-  name        = "sg-mysql"
-  description = "mysql security group"
+  name        = "sg-mongodb"
+  description = "mongodb security group"
   network_id  = yandex_vpc_network.vpc.id
 
   ingress {

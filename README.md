@@ -33,7 +33,6 @@ See [examples section](./examples/)
 export YC_TOKEN=$(yc iam create-token)
 export YC_CLOUD_ID=$(yc config get cloud-id)
 export YC_FOLDER_ID=$(yc config get folder-id)
-export TF_VAR_network_id=_vpc id here_
 ```
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
@@ -42,14 +41,14 @@ export TF_VAR_network_id=_vpc id here_
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
-| <a name="requirement_yandex"></a> [yandex](#requirement\_yandex) | >= 0.126.0 |
+| <a name="requirement_yandex"></a> [yandex](#requirement\_yandex) | >= 0.134.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_random"></a> [random](#provider\_random) | 3.6.2 |
-| <a name="provider_yandex"></a> [yandex](#provider\_yandex) | 0.129.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.6.3 |
+| <a name="provider_yandex"></a> [yandex](#provider\_yandex) | 0.134.0 |
 
 ## Modules
 
@@ -81,8 +80,8 @@ No modules.
 | <a name="input_hosts_definition"></a> [hosts\_definition](#input\_hosts\_definition) | A list of MongoDB hosts. | <pre>list(object({<br>    zone_id          = string<br>    role             = optional(string, null)<br>    subnet_id        = optional(string, null)<br>    assign_public_ip = optional(bool, false)<br>    shard_name       = optional(string, null)<br>    type             = optional(string, "mongod")<br>    host_parameters = optional(list(object({<br>      hidden               = optional(bool, null)<br>      priority             = optional(string, null)<br>      secondary_delay_secs = optional(number, null)<br>      tags                 = optional(any, null)<br>    })), [])<br>  }))</pre> | n/a | yes |
 | <a name="input_labels"></a> [labels](#input\_labels) | A set of label pairs to assing to the MongoDB cluster. | `map(any)` | `{}` | no |
 | <a name="input_maintenance_window"></a> [maintenance\_window](#input\_maintenance\_window) | (Optional) Maintenance policy of the MongoDB cluster.<br>      - type - (Required) Type of maintenance window. Can be either ANYTIME or WEEKLY. A day and hour of window need to be specified with weekly window.<br>      - day  - (Optional) Day of the week (in DDD format). Allowed values: "MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"<br>      - hour - (Optional) Hour of the day in UTC (in HH format). Allowed value is between 0 and 23. | <pre>object({<br>    type = string<br>    day  = optional(string, null)<br>    hour = optional(string, null)<br>  })</pre> | <pre>{<br>  "type": "ANYTIME"<br>}</pre> | no |
-| <a name="input_mongocfg"></a> [mongocfg](#input\_mongocfg) | Configuration for mongocfg instances | <pre>list(object({<br>    operation_profiling = optional(list(object({<br>      mode              = optional(string, null)<br>      slow_op_threshold = optional(number, null)<br>      # slow_op_sample_rate = optional(number,null)<br>    })), [])<br>    net = optional(list(object({<br>      max_incoming_connections = optional(number, null)<br>    })), [])<br>    # storage = list(object({<br>    #   journal     = optional(map(any),null) <br>    # }))<br>  }))</pre> | `[]` | no |
-| <a name="input_mongod"></a> [mongod](#input\_mongod) | Configuration for mongod instances | <pre>list(object({<br>    security = optional(list(object({<br>      enable_encryption = optional(bool, null)<br>      kmip              = optional(map(any), {})<br>    })), [])<br>    audit_log = optional(list(object({<br>      filter                = optional(string, null)<br>      runtime_configuration = optional(bool, null)<br>    })), [])<br>    set_parameter = optional(list(object({<br>      audit_authorization_success            = optional(bool, null)<br>      enable_flow_control                    = optional(bool, null)<br>      min_snapshot_history_window_in_seconds = optional(number, null)<br>    })), [])<br>    operation_profiling = optional(list(object({<br>      mode                = optional(string, null)<br>      slow_op_threshold   = optional(number, null)<br>      slow_op_sample_rate = optional(number, null)<br>    })), [])<br>    net = optional(list(object({<br>      max_incoming_connections = optional(number, null)<br>      compressors              = optional(list(string), [])<br>    })), [])<br>    storage = optional(list(object({<br>      wired_tiger = optional(map(any), {})<br>      journal     = optional(map(any), {})<br>    })), [])<br>  }))</pre> | `[]` | no |
+| <a name="input_mongocfg"></a> [mongocfg](#input\_mongocfg) | Configuration for mongocfg instances | <pre>list(object({<br>    operation_profiling = optional(list(object({<br>      mode              = optional(string, null)<br>      slow_op_threshold = optional(number, null)<br>      # slow_op_sample_rate = optional(number,null)<br>    })), [])<br>    net = optional(list(object({<br>      max_incoming_connections = optional(number, null)<br>    })), [])<br>    storage = list(object({<br>      wired_tiger = optional(map(any), null)<br>    }))<br>  }))</pre> | `[]` | no |
+| <a name="input_mongod"></a> [mongod](#input\_mongod) | Configuration for mongod instances | <pre>list(object({<br>    security = optional(list(object({<br>      enable_encryption = optional(bool, null)<br>      kmip              = optional(map(any), {})<br>    })), [])<br>    audit_log = optional(list(object({<br>      filter                = optional(string, null)<br>      runtime_configuration = optional(bool, null)<br>    })), [])<br>    set_parameter = optional(list(object({<br>      audit_authorization_success            = optional(bool, null)<br>      enable_flow_control                    = optional(bool, null)<br>      min_snapshot_history_window_in_seconds = optional(number, null)<br>    })), [])<br>    operation_profiling = optional(list(object({<br>      mode              = optional(string, null)<br>      slow_op_threshold = optional(number, null)<br>    })), [])<br>    net = optional(list(object({<br>      max_incoming_connections = optional(number, null)<br>      compressors              = optional(list(string), [])<br>    })), [])<br>    storage = optional(list(object({<br>      wired_tiger = optional(map(any), {})<br>      journal     = optional(map(any), {})<br>    })), [])<br>  }))</pre> | `[]` | no |
 | <a name="input_mongodb_version"></a> [mongodb\_version](#input\_mongodb\_version) | MongoDB version | `string` | `"6.0"` | no |
 | <a name="input_mongos"></a> [mongos](#input\_mongos) | Configuration for mongos instances | <pre>list(object({<br>    net = list(object({<br>      max_incoming_connections = optional(number, null)<br>      compressors              = optional(list(string), [])<br>    }))<br>  }))</pre> | `[]` | no |
 | <a name="input_name"></a> [name](#input\_name) | Name of MongoDB cluster | `string` | `"mongodb-cluster"` | no |

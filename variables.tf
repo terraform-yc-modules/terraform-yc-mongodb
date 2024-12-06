@@ -230,7 +230,6 @@ variable "users" {
   default = []
 }
 
-#! проверть
 variable "mongod" {
   description = "Configuration for mongod instances"
   type = list(object({
@@ -248,9 +247,8 @@ variable "mongod" {
       min_snapshot_history_window_in_seconds = optional(number, null)
     })), [])
     operation_profiling = optional(list(object({
-      mode                = optional(string, null)
-      slow_op_threshold   = optional(number, null)
-      slow_op_sample_rate = optional(number, null)
+      mode              = optional(string, null)
+      slow_op_threshold = optional(number, null)
     })), [])
     net = optional(list(object({
       max_incoming_connections = optional(number, null)
@@ -275,9 +273,9 @@ variable "mongocfg" {
     net = optional(list(object({
       max_incoming_connections = optional(number, null)
     })), [])
-    # storage = list(object({
-    #   journal     = optional(map(any),null) 
-    # }))
+    storage = list(object({
+      wired_tiger = optional(map(any), null)
+    }))
   }))
   default = []
 }

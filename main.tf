@@ -128,7 +128,6 @@ resource "yandex_mdb_mongodb_cluster" "this" {
           content {
             mode              = operation_profiling.value.mode
             slow_op_threshold = operation_profiling.value.slow_op_threshold
-            # slow_op_sample_rate = operation_profiling.value.slow_op_sample_rate
           }
         }
 
@@ -139,17 +138,17 @@ resource "yandex_mdb_mongodb_cluster" "this" {
           }
         }
 
-        # dynamic "storage" {
-        #   for_each = mongocfg.value.storage
-        #   content {
-        #     dynamic "journal" {
-        #       for_each = storage.value.journal
-        #       content {
-        #         commit_interval = journal.value.commit_interval
-        #       }
-        #     }
-        #   }
-        # }
+        dynamic "storage" {
+          for_each = mongocfg.value.storage
+          content {
+            dynamic "wired_tiger" {
+              for_each = storage.value.wired_tiger
+              content {
+                cache_size_gb = wired_tiger.value.cache_size_gb
+              }
+            }
+          }
+        }
       }
     }
   }
