@@ -33,7 +33,6 @@ See [examples section](./examples/)
 export YC_TOKEN=$(yc iam create-token)
 export YC_CLOUD_ID=$(yc config get cloud-id)
 export YC_FOLDER_ID=$(yc config get folder-id)
-export TF_VAR_network_id=_vpc id here_
 ```
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
