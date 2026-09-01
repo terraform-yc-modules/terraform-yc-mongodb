@@ -7,14 +7,15 @@ locals {
 }
 
 resource "yandex_mdb_mongodb_cluster" "this" {
-  name                = var.name
-  description         = var.description
-  environment         = var.environment
-  folder_id           = local.folder_id
-  labels              = var.labels
-  network_id          = var.network_id
-  security_group_ids  = var.security_groups_ids_list
-  deletion_protection = var.deletion_protection
+  name                   = var.name
+  description            = var.description
+  environment            = var.environment
+  folder_id              = local.folder_id
+  labels                 = var.labels
+  network_id             = var.network_id
+  security_group_ids     = var.security_groups_ids_list
+  deletion_protection    = var.deletion_protection
+  disk_encryption_key_id = var.disk_encryption_key_id
 
   cluster_config {
     version                       = var.mongodb_version
@@ -26,6 +27,16 @@ resource "yandex_mdb_mongodb_cluster" "this" {
       content {
         data_lens     = var.access_policy.data_lens
         data_transfer = var.access_policy.data_transfer
+        web_sql       = var.access_policy.web_sql
+      }
+    }
+    dynamic "autocompact_config" {
+      for_each = var.autocompact_config == null ? [] : [var.autocompact_config]
+      content {
+        enabled           = autocompact_config.value.enabled
+        compaction_type   = autocompact_config.value.compaction_type
+        bloat_percent     = autocompact_config.value.bloat_percent
+        target_free_space = autocompact_config.value.target_free_space
       }
     }
     dynamic "performance_diagnostics" {
@@ -65,16 +76,24 @@ resource "yandex_mdb_mongodb_cluster" "this" {
           for_each = mongod.value.audit_log
           content {
             filter                = audit_log.value.filter
-            runtime_configuration = audit_log.runtime_configuration
+            runtime_configuration = audit_log.value.runtime_configuration
           }
         }
 
         dynamic "operation_profiling" {
           for_each = mongod.value.operation_profiling
           content {
-            mode                = operation_profiling.value.mode
-            slow_op_threshold   = operation_profiling.value.slow_op_threshold
-            slow_op_sample_rate = _profiling.value.slow_op_sample_rate
+            mode              = operation_profiling.value.mode
+            slow_op_threshold = operation_profiling.value.slow_op_threshold
+          }
+        }
+
+        dynamic "set_parameter" {
+          for_each = mongod.value.set_parameter
+          content {
+            audit_authorization_success            = set_parameter.value.audit_authorization_success
+            enable_flow_control                    = set_parameter.value.enable_flow_control
+            min_snapshot_history_window_in_seconds = set_parameter.value.min_snapshot_history_window_in_seconds
           }
         }
 
@@ -196,6 +215,42 @@ resource "yandex_mdb_mongodb_cluster" "this" {
     disk_size          = var.resources_mongoinfra.disk_size
     disk_type_id       = var.resources_mongoinfra.disk_type_id
   }
+
+  dynamic "disk_size_autoscaling_mongod" {
+    for_each = var.disk_size_autoscaling_mongod == null ? [] : [var.disk_size_autoscaling_mongod]
+    content {
+      disk_size_limit           = disk_size_autoscaling_mongod.value.disk_size_limit
+      emergency_usage_threshold = disk_size_autoscaling_mongod.value.emergency_usage_threshold
+      planned_usage_threshold   = disk_size_autoscaling_mongod.value.planned_usage_threshold
+    }
+  }
+
+  dynamic "disk_size_autoscaling_mongos" {
+    for_each = var.disk_size_autoscaling_mongos == null ? [] : [var.disk_size_autoscaling_mongos]
+    content {
+      disk_size_limit           = disk_size_autoscaling_mongos.value.disk_size_limit
+      emergency_usage_threshold = disk_size_autoscaling_mongos.value.emergency_usage_threshold
+      planned_usage_threshold   = disk_size_autoscaling_mongos.value.planned_usage_threshold
+    }
+  }
+
+  dynamic "disk_size_autoscaling_mongocfg" {
+    for_each = var.disk_size_autoscaling_mongocfg == null ? [] : [var.disk_size_autoscaling_mongocfg]
+    content {
+      disk_size_limit           = disk_size_autoscaling_mongocfg.value.disk_size_limit
+      emergency_usage_threshold = disk_size_autoscaling_mongocfg.value.emergency_usage_threshold
+      planned_usage_threshold   = disk_size_autoscaling_mongocfg.value.planned_usage_threshold
+    }
+  }
+
+  dynamic "disk_size_autoscaling_mongoinfra" {
+    for_each = var.disk_size_autoscaling_mongoinfra == null ? [] : [var.disk_size_autoscaling_mongoinfra]
+    content {
+      disk_size_limit           = disk_size_autoscaling_mongoinfra.value.disk_size_limit
+      emergency_usage_threshold = disk_size_autoscaling_mongoinfra.value.emergency_usage_threshold
+      planned_usage_threshold   = disk_size_autoscaling_mongoinfra.value.planned_usage_threshold
+    }
+  }
   dynamic "restore" {
     for_each = range(var.restore_parameters == null ? 0 : 1)
     content {
@@ -210,6 +265,20 @@ resource "yandex_mdb_mongodb_cluster" "this" {
       type = var.maintenance_window.type
       day  = var.maintenance_window.day
       hour = var.maintenance_window.hour
+    }
+  }
+
+  lifecycle {
+    precondition {
+      condition = var.maintenance_window.type == "WEEKLY" || alltrue([
+        for autoscaling in [
+          var.disk_size_autoscaling_mongod,
+          var.disk_size_autoscaling_mongos,
+          var.disk_size_autoscaling_mongocfg,
+          var.disk_size_autoscaling_mongoinfra,
+        ] : try(autoscaling.planned_usage_threshold, null) == null
+      ])
+      error_message = "planned_usage_threshold requires maintenance_window.type to be WEEKLY."
     }
   }
 }

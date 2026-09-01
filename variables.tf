@@ -50,13 +50,19 @@ variable "deletion_protection" {
   default     = false
 }
 
+variable "disk_encryption_key_id" {
+  description = "ID of the KMS key used to encrypt the cluster disks."
+  type        = string
+  default     = null
+}
+
 variable "mongodb_version" {
   description = "MongoDB version"
   type        = string
-  default     = "6.0"
+  default     = "7.0"
   validation {
-    condition     = contains(["5.0", "6.0", "6.0-enterprise"], var.mongodb_version)
-    error_message = "Allowed MongoDB versions are 5.0, 6.0, 6.0-enterprise."
+    condition     = contains(["7.0", "8.0"], var.mongodb_version)
+    error_message = "Allowed MongoDB versions are 7.0 or 8.0."
   }
 }
 
@@ -65,8 +71,20 @@ variable "access_policy" {
   type = object({
     data_lens     = optional(bool, null)
     data_transfer = optional(bool, null)
+    web_sql       = optional(bool, null)
   })
   default = {}
+}
+
+variable "autocompact_config" {
+  description = "Optional autocompaction settings for the MongoDB cluster."
+  type = object({
+    enabled           = optional(bool, null)
+    compaction_type   = optional(string, null)
+    bloat_percent     = optional(number, null)
+    target_free_space = optional(number, null)
+  })
+  default = null
 }
 
 variable "performance_diagnostics" {
@@ -101,6 +119,18 @@ variable "maintenance_window" {
   default = {
     type = "ANYTIME"
   }
+  validation {
+    condition = (
+      var.maintenance_window.type == "ANYTIME" &&
+      var.maintenance_window.day == null &&
+      var.maintenance_window.hour == null
+      ) || (
+      var.maintenance_window.type == "WEEKLY" &&
+      try(contains(["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"], var.maintenance_window.day), false) &&
+      try(can(regex("^(0[0-9]|1[0-9]|2[0-3])$", var.maintenance_window.hour)), false)
+    )
+    error_message = "Use ANYTIME without day or hour, or WEEKLY with day MON-SUN and hour 00-23."
+  }
 }
 
 variable "backup_retain_period_days" {
@@ -114,8 +144,8 @@ variable "feature_compatibility_version" {
   type        = string
   default     = ""
   validation {
-    condition     = contains(["5.0", "6.0", ""], var.feature_compatibility_version)
-    error_message = "Allowed MongoDB feature compatibility version are 5.0, 6.0."
+    condition     = contains(["5.0", "6.0", "7.0", "8.0", ""], var.feature_compatibility_version)
+    error_message = "Allowed MongoDB feature compatibility versions are 5.0, 6.0, 7.0, or 8.0."
   }
 }
 
@@ -193,6 +223,46 @@ variable "resources_mongoinfra" {
     disk_type_id       = optional(string, "network-ssd")
   })
   default = {}
+}
+
+variable "disk_size_autoscaling_mongod" {
+  description = "Optional disk autoscaling settings for mongod hosts. planned_usage_threshold requires a WEEKLY maintenance window."
+  type = object({
+    disk_size_limit           = number
+    emergency_usage_threshold = optional(number, null)
+    planned_usage_threshold   = optional(number, null)
+  })
+  default = null
+}
+
+variable "disk_size_autoscaling_mongos" {
+  description = "Optional disk autoscaling settings for mongos hosts. planned_usage_threshold requires a WEEKLY maintenance window."
+  type = object({
+    disk_size_limit           = number
+    emergency_usage_threshold = optional(number, null)
+    planned_usage_threshold   = optional(number, null)
+  })
+  default = null
+}
+
+variable "disk_size_autoscaling_mongocfg" {
+  description = "Optional disk autoscaling settings for mongocfg hosts. planned_usage_threshold requires a WEEKLY maintenance window."
+  type = object({
+    disk_size_limit           = number
+    emergency_usage_threshold = optional(number, null)
+    planned_usage_threshold   = optional(number, null)
+  })
+  default = null
+}
+
+variable "disk_size_autoscaling_mongoinfra" {
+  description = "Optional disk autoscaling settings for mongoinfra hosts. planned_usage_threshold requires a WEEKLY maintenance window."
+  type = object({
+    disk_size_limit           = number
+    emergency_usage_threshold = optional(number, null)
+    planned_usage_threshold   = optional(number, null)
+  })
+  default = null
 }
 
 variable "databases" {
