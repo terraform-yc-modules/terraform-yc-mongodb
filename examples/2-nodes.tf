@@ -31,8 +31,20 @@ module "mongo" {
     }]
   }]
 
+  access_policy = {
+    web_sql = true
+  }
+
+  disk_size_autoscaling_mongod = {
+    disk_size_limit           = 80
+    emergency_usage_threshold = 95
+    planned_usage_threshold   = 80
+  }
+
   maintenance_window = {
-    type : "ANYTIME"
+    type : "WEEKLY"
+    day : "MON"
+    hour : "01"
   }
 
 }
