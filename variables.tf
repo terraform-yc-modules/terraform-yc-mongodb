@@ -109,7 +109,7 @@ variable "maintenance_window" {
     (Optional) Maintenance policy of the MongoDB cluster.
       - type - (Required) Type of maintenance window. Can be either ANYTIME or WEEKLY. A day and hour of window need to be specified with weekly window.
       - day  - (Optional) Day of the week (in DDD format). Allowed values: "MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"
-      - hour - (Optional) Hour of the day in UTC (in HH format). Allowed value is between 0 and 23.
+      - hour - (Optional) Hour of the day in UTC, from 1 to 24 inclusive.
   EOF
   type = object({
     type = string
@@ -127,9 +127,9 @@ variable "maintenance_window" {
       ) || (
       var.maintenance_window.type == "WEEKLY" &&
       try(contains(["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"], var.maintenance_window.day), false) &&
-      try(can(regex("^(0[0-9]|1[0-9]|2[0-3])$", var.maintenance_window.hour)), false)
+      can(regex("^(0?[1-9]|1[0-9]|2[0-4])$", var.maintenance_window.hour))
     )
-    error_message = "Use ANYTIME without day or hour, or WEEKLY with day MON-SUN and hour 00-23."
+    error_message = "Use ANYTIME without day or hour, or WEEKLY with day MON-SUN and hour 1-24."
   }
 }
 

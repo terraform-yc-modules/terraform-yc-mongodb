@@ -41,16 +41,16 @@ export YC_FOLDER_ID=$(yc config get folder-id)
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
 | <a name="requirement_yandex"></a> [yandex](#requirement\_yandex) | >= 0.225.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
-| <a name="provider_random"></a> [random](#provider\_random) | 3.9.0 |
-| <a name="provider_yandex"></a> [yandex](#provider\_yandex) | 0.225.0 |
+| ---- | ------- |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.9.1 |
+| <a name="provider_yandex"></a> [yandex](#provider\_yandex) | 0.250.0 |
 
 ## Modules
 
@@ -59,7 +59,7 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [random_password.password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
 | [yandex_mdb_mongodb_cluster.this](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/mdb_mongodb_cluster) | resource |
 | [yandex_mdb_mongodb_database.this](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/mdb_mongodb_database) | resource |
@@ -69,7 +69,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_access_policy"></a> [access\_policy](#input\_access\_policy) | Access policy from other services to the MongoDB cluster. | <pre>object({<br/>    data_lens     = optional(bool, null)<br/>    data_transfer = optional(bool, null)<br/>    web_sql       = optional(bool, null)<br/>  })</pre> | `{}` | no |
 | <a name="input_autocompact_config"></a> [autocompact\_config](#input\_autocompact\_config) | Optional autocompaction settings for the MongoDB cluster. | <pre>object({<br/>    enabled           = optional(bool, null)<br/>    compaction_type   = optional(string, null)<br/>    bloat_percent     = optional(number, null)<br/>    target_free_space = optional(number, null)<br/>  })</pre> | `null` | no |
 | <a name="input_backup_retain_period_days"></a> [backup\_retain\_period\_days](#input\_backup\_retain\_period\_days) | (Optional) The period in days during which backups are stored. | `number` | `7` | no |
@@ -87,7 +87,7 @@ No modules.
 | <a name="input_folder_id"></a> [folder\_id](#input\_folder\_id) | Folder id that contains the MongoDB cluster | `string` | `null` | no |
 | <a name="input_hosts_definition"></a> [hosts\_definition](#input\_hosts\_definition) | A list of MongoDB hosts. | <pre>list(object({<br/>    zone_id          = string<br/>    role             = optional(string, null)<br/>    subnet_id        = optional(string, null)<br/>    assign_public_ip = optional(bool, false)<br/>    shard_name       = optional(string, null)<br/>    type             = optional(string, "mongod")<br/>    host_parameters = optional(list(object({<br/>      hidden               = optional(bool, null)<br/>      priority             = optional(string, null)<br/>      secondary_delay_secs = optional(number, null)<br/>      tags                 = optional(any, null)<br/>    })), [])<br/>  }))</pre> | n/a | yes |
 | <a name="input_labels"></a> [labels](#input\_labels) | A set of label pairs to assing to the MongoDB cluster. | `map(any)` | `{}` | no |
-| <a name="input_maintenance_window"></a> [maintenance\_window](#input\_maintenance\_window) | (Optional) Maintenance policy of the MongoDB cluster.<br/>      - type - (Required) Type of maintenance window. Can be either ANYTIME or WEEKLY. A day and hour of window need to be specified with weekly window.<br/>      - day  - (Optional) Day of the week (in DDD format). Allowed values: "MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"<br/>      - hour - (Optional) Hour of the day in UTC (in HH format). Allowed value is between 0 and 23. | <pre>object({<br/>    type = string<br/>    day  = optional(string, null)<br/>    hour = optional(string, null)<br/>  })</pre> | <pre>{<br/>  "type": "ANYTIME"<br/>}</pre> | no |
+| <a name="input_maintenance_window"></a> [maintenance\_window](#input\_maintenance\_window) | (Optional) Maintenance policy of the MongoDB cluster.<br/>      - type - (Required) Type of maintenance window. Can be either ANYTIME or WEEKLY. A day and hour of window need to be specified with weekly window.<br/>      - day  - (Optional) Day of the week (in DDD format). Allowed values: "MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"<br/>      - hour - (Optional) Hour of the day in UTC, from 1 to 24 inclusive. | <pre>object({<br/>    type = string<br/>    day  = optional(string, null)<br/>    hour = optional(string, null)<br/>  })</pre> | <pre>{<br/>  "type": "ANYTIME"<br/>}</pre> | no |
 | <a name="input_mongocfg"></a> [mongocfg](#input\_mongocfg) | Configuration for mongocfg instances | <pre>list(object({<br/>    operation_profiling = optional(list(object({<br/>      mode              = optional(string, null)<br/>      slow_op_threshold = optional(number, null)<br/>      # slow_op_sample_rate = optional(number,null)<br/>    })), [])<br/>    net = optional(list(object({<br/>      max_incoming_connections = optional(number, null)<br/>    })), [])<br/>    storage = list(object({<br/>      wired_tiger = optional(map(any), null)<br/>    }))<br/>  }))</pre> | `[]` | no |
 | <a name="input_mongod"></a> [mongod](#input\_mongod) | Configuration for mongod instances | <pre>list(object({<br/>    security = optional(list(object({<br/>      enable_encryption = optional(bool, null)<br/>      kmip              = optional(map(any), {})<br/>    })), [])<br/>    audit_log = optional(list(object({<br/>      filter                = optional(string, null)<br/>      runtime_configuration = optional(bool, null)<br/>    })), [])<br/>    set_parameter = optional(list(object({<br/>      audit_authorization_success            = optional(bool, null)<br/>      enable_flow_control                    = optional(bool, null)<br/>      min_snapshot_history_window_in_seconds = optional(number, null)<br/>    })), [])<br/>    operation_profiling = optional(list(object({<br/>      mode              = optional(string, null)<br/>      slow_op_threshold = optional(number, null)<br/>    })), [])<br/>    net = optional(list(object({<br/>      max_incoming_connections = optional(number, null)<br/>      compressors              = optional(list(string), [])<br/>    })), [])<br/>    storage = optional(list(object({<br/>      wired_tiger = optional(map(any), {})<br/>      journal     = optional(map(any), {})<br/>    })), [])<br/>  }))</pre> | `[]` | no |
 | <a name="input_mongodb_version"></a> [mongodb\_version](#input\_mongodb\_version) | MongoDB version | `string` | `"7.0"` | no |
@@ -106,7 +106,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_cluster_host_names_list"></a> [cluster\_host\_names\_list](#output\_cluster\_host\_names\_list) | MongoDB cluster host name |
 | <a name="output_cluster_id"></a> [cluster\_id](#output\_cluster\_id) | MongoDB cluster ID |
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | MongoDB cluster name |
